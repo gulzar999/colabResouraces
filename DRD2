@@ -1,0 +1,113 @@
+DRD2 CNS Active Compound Identification and Generation
+
+📄 Overview
+
+This project is a comprehensive cheminformatics workflow focused on the Dopamine Receptor D2 (DRD2), a crucial therapeutic target in Central Nervous System (CNS) disorders. The goal is to perform Quantitative Structure-Activity Relationship (QSAR) modeling and subsequent de novo molecular generation to identify novel, potent, and brain-penetrant drug candidates.
+
+The entire analysis, from data curation and feature engineering to model training and candidate prioritization, is encapsulated within the DRD2_CNS.ipynb Jupyter Notebook.
+
+✨ Key Workflow Steps
+
+Data Curation & Filtering: Retrieve binding data (pIC50/IC50) for the DRD2 receptor (ChEMBL ID: CHEMBL217) from the ChEMBL database [cite: uploaded:DRD2_CNS.ipynb].
+
+Molecular Property Calculation: Calculate RDKit descriptors (MW, LogP, TPSA, etc.) and generate Morgan Fingerprints (ECFP-like) for QSAR modeling [cite: uploaded:DRD2_CNS.ipynb].
+
+CNS Drug-Likeness Assessment: Filter the dataset to enrich for high-quality, drug-like, and brain-penetrant molecules using:
+
+QED (Quantitative Estimation of Drug-likeness) score.
+
+Peifer BBB Rules for Blood-Brain Barrier permeability [cite: uploaded:DRD2_CNS.ipynb].
+
+CNS MPO (Multiparameter Optimization) score [cite: uploaded:DRD2_CNS.ipynb].
+
+QSAR Model Training: Train a machine learning regression model (e.g., using scikit-learn) on the molecular features (descriptors + fingerprints) to accurately predict the binding affinity, $\text{log}(\text{IC}_{50})$ [cite: uploaded:DRD2_CNS.ipynb].
+
+Molecular Generation: Utilize a recurrent neural network (SelfiesRNN) trained on the SELFIES representation of molecules to generate thousands of novel chemical structures [cite: uploaded:DRD2_CNS.ipynb].
+
+Candidate Prioritization: Predict the binding affinity and CNS properties for the generated structures, and filter them to select the most promising novel drug candidates that satisfy potency and brain-penetrant criteria [cite: uploaded:DRD2_CNS.ipynb].
+
+🛠️ Prerequisites
+
+This project is developed in Python and relies heavily on cheminformatics and deep learning libraries.
+
+Python Libraries
+
+The following dependencies are required (often installed in the first notebook cell):
+
+chembl_webresource_client: For accessing and downloading ChEMBL data.
+
+rdkit: The essential toolkit for cheminformatics (molecular manipulation, descriptor calculation, fingerprint generation).
+
+pandas, numpy: For data manipulation and numerical operations.
+
+matplotlib, seaborn: For data visualization and model evaluation plots.
+
+torch: The deep learning framework used for the SelfiesRNN generative model.
+
+selfies: For encoding and decoding molecules in the robust SELFIES format.
+
+scikit-learn: For training the QSAR regression model.
+
+🚀 Installation and Usage
+
+1. Environment Setup
+
+It is recommended to use a virtual environment.
+
+# If not already installed, install RDKit using Conda (recommended)
+# conda create -n drd2_env python=3.9
+# conda activate drd2_env
+# conda install -c conda-forge rdkit
+
+# Install other required libraries
+pip install chembl_webresource_client pandas matplotlib seaborn torch selfies scikit-learn --quiet
+
+
+2. Running the Analysis
+
+Download or clone the DRD2_CNS.ipynb notebook.
+
+Launch Jupyter Notebook or JupyterLab:
+
+jupyter notebook DRD2_CNS.ipynb
+
+
+Execute all cells sequentially. The notebook is designed to be self-contained and run the entire pipeline from beginning to end.
+
+📂 Key Output Files
+
+The execution of the notebook generates several intermediate and final result files:
+
+File Name
+
+Description
+
+drd2_bbb_permeable_high_moderate_qed_binding_500_rdkit.csv
+
+Initial curated training set (filtered for potency, QED, and CNS properties).
+
+DRD2_training_with_fingerprints.csv
+
+Final QSAR training dataset, including the computed Morgan fingerprints.
+
+DRD2_generated_with_predicted_ic50_fingerprints.csv
+
+A large list of novel, generated molecules with their predicted properties.
+
+DRD2_filtered_candidates.csv
+
+The small, highly prioritized list of novel drug candidates that meet all specified potency ($\text{IC}_{50}$) and CNS-MPO criteria.
+
+train_tensor.pt, val_tensor.pt
+
+PyTorch tensors containing the tokenized SELFIES sequences for RNN training.
+
+📈 Visualizations
+
+The notebook includes several critical visualizations for analysis:
+
+Molecular Property Histograms: Visualizing the distributions of TPSA, LogP, MW, QED, and CNS-MPO scores for the curated training set to ensure appropriate data quality.
+
+QSAR Model Performance: A scatter plot of Predicted $\text{log}(\text{IC}_{50})$ vs. Actual $\text{log}(\text{IC}_{50})$ to assess model accuracy ($R^2$, RMSE).
+
+Candidate Property Distributions: Plots demonstrating the properties of the final generated candidates compared to the initial training set, confirming the enrichment of desired characteristics.
